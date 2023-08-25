@@ -44,6 +44,7 @@ jobs:
         tags: ${{ env.IMAGE_TAGS }}
 
     # https://github.com/redhat-actions/push-to-registry#readme
+    # Pushing to ghcr.io
     - name: Push to Registry 
       id: push-to-registry
       uses: redhat-actions/push-to-registry@v2
