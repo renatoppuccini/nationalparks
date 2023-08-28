@@ -42,7 +42,7 @@ jobs:
         builder_image: 'registry.access.redhat.com/ubi8/openjdk-11'
         image: ${{ env.APP_NAME }}
         tags: ${{ env.IMAGE_TAGS }}
-
+    #test change
     # https://github.com/redhat-actions/push-to-registry#readme
     # Pushing to ghcr.io
     - name: Push to Registry 
