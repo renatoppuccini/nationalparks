@@ -55,7 +55,10 @@ jobs:
         password: ${{ env.REGISTRY_PASSWORD }}
 
     # The path the image was pushed to is now stored in ${{ steps.push-to-registry.outputs.registry-path }}
-
+  openshift-deploy: 
+    name: Deploy app to openshift
+    runs-on: macos-latest
+    steps:
     # https://github.com/redhat-actions/oc-login#readme
     - name: Log in to OpenShift 
       uses: redhat-actions/oc-login@v1
