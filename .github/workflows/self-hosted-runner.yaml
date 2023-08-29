@@ -1,1 +1,52 @@
+name: Build Quarkus project on OpenShift
+on: 
+  push: 
+  
+jobs: 
+  install_runner: 
+    name: Install Runner 
+    runs-on: ubuntu-20.04 
 
+    steps: 
+      - name: Log in to OpenShift 
+        uses: redhat-actions/oc-login@v1 
+        with: 
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }} 
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }} 
+      
+      - uses: redhat-actions/openshift-actions-runner-installer@v1 
+        with: 
+          github_pat: ${{ secrets.PAT }}     # Personal access token with organization permissions
+          runner_location: redhat-actions                               # Install organization level runners
+          runner_image: quay.io/redhat-github-actions/java-runner-11    # Use our prebuilt Java runner image
+          runner_labels: openshift, java                                
+  
+  build-quarkus: 
+    name: Self Hosted Quarkus Build and Test
+    
+    runs-on: [ self-hosted, openshift, java ]             # Use the same labels we gave the runner above    
+    needs: install_runner                                 # Wait until the job above completes
+
+    env:
+      WORKDIR: getting-started                  
+
+    steps:
+      - uses: actions/checkout@v2                         # Checkout a java project to build
+        with:
+          repository: redhat-actions/quarkus-quickstarts
+
+      # https://github.com/redhat-actions/quarkus-quickstarts/tree/master/getting-started#readme
+
+      - name: Install and build
+        run: ./mvnw install -ntp
+        working-directory: ${{ env.WORKDIR }}
+
+      - name: Run tests
+        run: ./mvnw test
+        working-directory: ${{ env.WORKDIR }}
+
+      - name: Upload jar artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-jar-files.zip
+          path: ${{ env.WORKDIR }}/target/*.jar
