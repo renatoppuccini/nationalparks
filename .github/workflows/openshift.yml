@@ -55,10 +55,7 @@ jobs:
         password: ${{ env.REGISTRY_PASSWORD }}
 
     # The path the image was pushed to is now stored in ${{ steps.push-to-registry.outputs.registry-path }}
-  openshift-deploy: 
-    name: Deploy app to openshift
-    runs-on: ubuntu-latest
-    steps:
+
     - name: install OC
       uses: redhat-actions/openshift-tools-installer@v1
       with:
@@ -71,9 +68,6 @@ jobs:
         openshift_token: ${{ env.OPENSHIFT_TOKEN }}
         insecure_skip_tls_verify: true
         namespace: ${{ env.OPENSHIFT_NAMESPACE }}
-    - run: |
-        pwd
-        ls $(pwd)
         
     # Run a script to create a new app or update the current one with the previously pushed container image
     - run: | 
